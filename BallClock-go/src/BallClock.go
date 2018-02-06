@@ -5,6 +5,7 @@ import (
   "bytes"
   "os"
   "strconv"
+  "time"
 )
 
 type BallClock struct { 
@@ -16,21 +17,20 @@ type BallClock struct {
 
 func overflow(overflowed []int, overflow []int, reserve []int) ([]int, []int, []int){
 	overflow = append(overflow, overflowed[len(overflowed) - 1])
-	overflowed, reserve = spill(overflowed[0:len(overflowed) - 2], reserve)
+	overflowed, reserve = spill(overflowed[0:len(overflowed) - 1], reserve)
   
   return overflowed, overflow, reserve
 }
 
 func spill(overflowed []int, reserve []int) ([]int, []int){
-	for i:=len(overflowed) - 1;i>=0;i-- {
-		reserve = append(reserve, overflowed[i])
+  for i:=len(overflowed) - 1;i>=0;i-- {
+    reserve = append(reserve, overflowed[i])
 	}
   overflowed = make([]int,0)
   return overflowed, reserve
 }
 
 func incrementMinute(clock BallClock) BallClock{
-  fmt.Println(toString(clock))
 	clock.min = append(clock.min, clock.reserve[0])
 	clock.reserve = clock.reserve[1:]
 	if len(clock.min) > 4 {
@@ -160,8 +160,9 @@ func main() {
     } else if(reserveCapacity > 127){
       os.Exit(-1)
     } else {
+      start := time.Now()
       var reserve []int
-      for i := 1; i< reserveCapacity; i++ {
+      for i := 1; i <= reserveCapacity; i++ {
         reserve = append(reserve, i)
       }
       ballclock := BallClock{[]int{}, []int{}, []int{}, reserve}
@@ -173,7 +174,10 @@ func main() {
         ballclock = incrementMinute(ballclock)
       }
       
-      fmt.Print( "%d balls cycled after %d days.", reserveCapacity, minutesRan / 720)
+      duration := time.Since(start)
+      fmt.Printf( "%d balls cycled after %d days.\n", reserveCapacity, minutesRan / 720)
+      fmt.Print(duration)
+      fmt.Printf( "Completed in %d milliseconds (%.3f seconds)", duration / 1000 / 1000, float64(duration) / 1000 / 1000 / 1000 )
     }
   } else if (len(args) == 3 ) {
     reserveCapacity, err := strconv.Atoi(args[1])
@@ -189,7 +193,7 @@ func main() {
       os.Exit(-1)
     } else {
       var reserve []int
-      for i := 1; i< reserveCapacity; i++ {
+      for i := 1; i<= reserveCapacity; i++ {
         reserve = append(reserve, (int)(i))
       }
       ballclock := BallClock{[]int{}, []int{}, []int{}, reserve}
