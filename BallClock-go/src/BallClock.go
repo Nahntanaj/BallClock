@@ -175,7 +175,7 @@ func main() {
       }
       
       duration := time.Since(start)
-      fmt.Printf( "%d balls cycled after %d days.\n", reserveCapacity, minutesRan / 720)
+      fmt.Printf( "%d balls cycled after %d days.\n", reserveCapacity, minutesRan / 60 / 24)
       fmt.Print(duration)
       fmt.Printf( "Completed in %d milliseconds (%.3f seconds)", duration / 1000 / 1000, float64(duration) / 1000 / 1000 / 1000 )
     }
